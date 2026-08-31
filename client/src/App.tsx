@@ -68,8 +68,8 @@ export default function App() {
           <section className="order-1 flex min-w-0 flex-col gap-4 lg:col-span-2 2xl:order-2 2xl:col-span-6">
             <Panel
               title="3D koncept kocky"
-              className="overflow-hidden"
-              bodyClassName="relative h-[clamp(20rem,52vh,38rem)] p-0"
+              className="h-[min(58vh,40rem)] min-h-[22rem] overflow-hidden"
+              bodyClassName="relative !p-0"
             >
               <div className="absolute inset-0 overflow-hidden">
                 <DiceViewer

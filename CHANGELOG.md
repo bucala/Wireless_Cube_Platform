@@ -28,10 +28,17 @@ verzovanie podľa [Semantic Versioning](https://semver.org/lang/sk/).
   (`hardware.test.ts`).
 
 ### Opravené (klient)
+- 3D náhľad sa nezobrazoval: výška na tele panelu bola prepísaná `flex-1`
+  (flex-basis 0 %) v auto-výškovom kontajneri, takže canvas mal nulovú výšku.
+  Výška je teraz na paneli (`h-[min(58vh,40rem)]` + `min-h`).
+- Skin 2 (sivá + oranžová) bol prepracovaný: výraznejšia oranžová, tmavšie
+  sivé pozadie, čierne aj červené prvky v UI aj 3D scéne.
+- Pri ťahaní sliderov, prepínaní ovládacích prvkov alebo otáčaní 3D scény
+  už myš neoznačuje text stránky; hodnoty v logoch a poliach zostávajú
+  selektovateľné kvôli kopírovaniu UID.
 - Rozloženie pri zmene veľkosti okna: panely sa už neprekrývajú ani nezbiehajú
   – stránka má jediný scrollovací kontejner, panely sú v CSS gridе s
-  `items-start` a 3D náhľad má fixnú `clamp()` výšku namiesto vnútorného
-  scrollu.
+  `items-start` a 3D náhľad má riešenú výšku namiesto vnútorného scrollu.
 
 ### Opravené (firmware)
 - Firmware sa nedal skompilovať: lokálne pomocné funkcie `bitGet`/`bitSet`

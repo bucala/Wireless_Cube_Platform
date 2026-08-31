@@ -46,6 +46,25 @@
     outline: 2px solid rgb(var(--c-accent) / 0.7);
     outline-offset: 2px;
   }
+
+  /* Pri ťahaní slidera, prepínaní čipov alebo otáčaní 3D scény nesmie myš
+     označovať text okolo. Hodnoty v logoch a poliach zostávajú selektovateľné,
+     aby sa dal UID skopírovať. */
+  button,
+  [role='switch'],
+  .chip,
+  .seg,
+  .seg-item,
+  .panel-title,
+  .field-label,
+  input[type='range'] {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  input[type='range'] {
+    touch-action: none;
+  }
 }
 
 @layer components {
