@@ -213,26 +213,40 @@ export function normalizeGeometry(raw: unknown): DiceGeometry {
   const data = (raw ?? {}) as Partial<DiceGeometry> & { tagDiameterMm?: number; tagType?: string };
   const shape: TagShape = data.tagShape === 'round' ? 'round' : 'square';
   return {
-    coreMm: clampToLimit(Number(data.coreMm), GEOMETRY_LIMITS.coreMm, DEFAULT_GEOMETRY.coreMm),
-    shellMm: clampToLimit(Number(data.shellMm), GEOMETRY_LIMITS.shellMm, DEFAULT_GEOMETRY.shellMm),
+    coreMm: clampToLimit(toNumber(data.coreMm), GEOMETRY_LIMITS.coreMm, DEFAULT_GEOMETRY.coreMm),
+    shellMm: clampToLimit(
+      toNumber(data.shellMm),
+      GEOMETRY_LIMITS.shellMm,
+      DEFAULT_GEOMETRY.shellMm,
+    ),
     tagMm: clampToLimit(
-      Number(data.tagMm ?? data.tagDiameterMm),
+      toNumber(data.tagMm ?? data.tagDiameterMm),
       GEOMETRY_LIMITS.tagMm,
       DEFAULT_GEOMETRY.tagMm,
     ),
     tagShape: shape,
     tagModel: data.tagModel ?? data.tagType ?? DEFAULT_GEOMETRY.tagModel,
     cornerRadiusMm: clampToLimit(
-      Number(data.cornerRadiusMm),
+      toNumber(data.cornerRadiusMm),
       GEOMETRY_LIMITS.cornerRadiusMm,
       DEFAULT_GEOMETRY.cornerRadiusMm,
     ),
     pipDepthMm: clampToLimit(
-      Number(data.pipDepthMm),
+      toNumber(data.pipDepthMm),
       GEOMETRY_LIMITS.pipDepthMm,
       DEFAULT_GEOMETRY.pipDepthMm,
     ),
   };
+}
+
+/**
+ * Chýbajúca hodnota (null/undefined/prázdny reťazec) aj nezmyselný vstup sa
+ * premenia na NaN, takže `clampToLimit` vráti default. `Number(null)` by inak
+ * dal 0 a hodnota by sa zovrela na minimum namiesto fallbacku.
+ */
+function toNumber(value: unknown): number {
+  if (value === null || value === undefined || value === '') return Number.NaN;
+  return Number(value);
 }
 
 export function loadStoredGeometry(): DiceGeometry {
