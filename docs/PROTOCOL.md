@@ -145,7 +145,15 @@ Klient exportuje profil kocky ako JSON (`client/src/lib/profile.ts`):
   "name": "Kocka 01",
   "createdAt": "2026-08-30T10:12:04.881Z",
   "updatedAt": "2026-08-30T10:19:44.102Z",
-  "geometry": { "coreMm": 7.5, "shellMm": 12, "tagDiameterMm": 5, "tagType": "NTAG213" },
+  "geometry": {
+    "coreMm": 8,
+    "shellMm": 12,
+    "tagMm": 5,
+    "tagShape": "square",
+    "tagModel": "NTAG213",
+    "cornerRadiusMm": 1.4,
+    "pipDepthMm": 0.3
+  },
   "rf": { "tunedPowerPct": 27, "ceilingPct": 45, "lowEdgePct": 24, "firmware": "1.0.0" },
   "bindings": [
     {
@@ -163,3 +171,8 @@ Klient exportuje profil kocky ako JSON (`client/src/lib/profile.ts`):
 `face` je jeden z `px | nx | py | ny | pz | nz`, `value` je počet bodiek na
 príslušnej stene skla a `topValue = 7 − value` je hodnota, ktorú hráč vidí
 zhora, keď táto stena leží na čítačke.
+
+`geometry` je snapshot rozmerov (`client/src/lib/hardware.ts`) z doby merania.
+Staršie profily s poľami `tagDiameterMm`/`tagType` sa pri importe automaticky
+migrujú; chýbajúce alebo neplatné hodnoty sa doplnia výrobnými defaultmi
+(jadro 8 mm, kocka 12 mm, tag 5 mm).

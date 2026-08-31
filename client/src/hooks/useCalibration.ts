@@ -12,9 +12,11 @@ import {
   renameProfile,
   storeProfile,
   unbindFace,
+  withGeometry,
   withRfSettings,
   type DiceProfile,
 } from '../lib/profile';
+import type { DiceGeometry } from '../lib/hardware';
 import type { DeviceLink } from './useDeviceLink';
 
 export type PairingPhase = 'idle' | 'waiting' | 'awaitFace' | 'done';
@@ -111,6 +113,18 @@ export function useCalibration(link: DeviceLink) {
     setProfile((previous) => unbindFace(previous, face));
   }, []);
 
+  /**
+   * Zapíše aktuálne rozmery do profilu. Porovnanie cez JSON drží identitu
+   * objektu, keď sa nič nezmenilo, takže z toho nevznikne renderovacia smyčka.
+   */
+  const applyGeometry = useCallback((geometry: DiceGeometry) => {
+    setProfile((previous) =>
+      JSON.stringify(previous.geometry) === JSON.stringify(geometry)
+        ? previous
+        : withGeometry(previous, geometry),
+    );
+  }, []);
+
   const rename = useCallback((name: string) => {
     setProfile((previous) => renameProfile(previous, name));
   }, []);
@@ -154,6 +168,7 @@ export function useCalibration(link: DeviceLink) {
     startPairing,
     cancelPairing,
     assignFace,
+    applyGeometry,
     unbind,
     rename,
     resetProfile,

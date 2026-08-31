@@ -93,14 +93,15 @@ export function PowerTuner({ link, targetUid }: PowerTunerProps) {
                 {mark}
               </span>
             ))}
+            {/* Farby berieme z palety skinu, nie z pevných hex hodnôt. */}
             {dpc && dpc.lowEdgePct > 0 && (
-              <Marker value={dpc.lowEdgePct} color="#34d399" label="dolná hrana" />
+              <Marker value={dpc.lowEdgePct} color="rgb(var(--c-ok))" label="dolná hrana" />
             )}
             {dpc && dpc.ceilingPct > 0 && (
-              <Marker value={dpc.ceilingPct} color="#fbbf24" label="strop" />
+              <Marker value={dpc.ceilingPct} color="rgb(var(--c-warn))" label="strop" />
             )}
             {dpc && dpc.resultPct > 0 && (
-              <Marker value={dpc.resultPct} color="#38bdf8" label="odporúčané" />
+              <Marker value={dpc.resultPct} color="rgb(var(--c-accent))" label="odporúčané" />
             )}
           </div>
         </div>

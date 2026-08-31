@@ -5,7 +5,35 @@ verzovanie podľa [Semantic Versioning](https://semver.org/lang/sk/).
 
 ## [Unreleased]
 
-### Opravené
+### Pridané (klient)
+- **Skiny** – tri kompletné farebné schémy prepínané v hlavičke a uložené v
+  prehliadači: Skin 1 (biela + oranžová, prvky čiernej a červenej),
+  Skin 2 (sivá + oranžová, prvky čiernej a červenej) a Skin 3 (pôvodná tmavá
+  + azúrová). Celé UI aj 3D scéna idú cez jednu paletu (`lib/skins.ts` +
+  CSS premenné), takže prepnutie zmení aj farby kocky, čítačky a poľa.
+- **Konfigurácia zostavy** (`lib/hardware.ts` + panel Rozmery a zostava):
+  jadro 8×8×8 mm, vonkajšia kocka 12×12×12 mm, TAG NTAG213 5×5 mm (štvorec,
+  voliteľne kruh), mikrokontrolér ESP32-S3-WROOM-1 N16R8 a čítačka PN5180 na
+  hardvérovom SPI so špecifikáciou a pinoutom. Rozmery sa dajú meniť slidermi
+  aj presnými poľami, validujú sa (chyby/varovania) a zapisujú do profilu.
+- **Ovládanie 3D náhľadu** (panel Ovládanie náhľadu): pozastavenie a rýchlosť
+  rotácie, pohľady ISO/predok/vrch/bok, vycentrovanie kamery, rozklad zostavy
+  (exploded view) a prepínanie viditeľnosti jadra, plášťa, TAGu, bodiek,
+  poľa, čítačky, popiskov a osí. Strohý režim vypína odlesky, gradienty
+  a tieňovanie pre rýchlejší a čitateľnejší render.
+- **Tvar kocky**: zaoblené hrany plášťa aj jadra (RoundedBox) s nastaviteľným
+  polomerom, hĺbka vyrazených bodiek, tvar a model tagu na každej stene.
+- Nové UI komponenty (segmentovaný prepínač, slider, číselné pole so jednotkou,
+  prepínač-čip, tabuľka špecifikácií) a testy geometrickej logiky
+  (`hardware.test.ts`).
+
+### Opravené (klient)
+- Rozloženie pri zmene veľkosti okna: panely sa už neprekrývajú ani nezbiehajú
+  – stránka má jediný scrollovací kontejner, panely sú v CSS gridе s
+  `items-start` a 3D náhľad má fixnú `clamp()` výšku namiesto vnútorného
+  scrollu.
+
+### Opravené (firmware)
 - Firmware sa nedal skompilovať: lokálne pomocné funkcie `bitGet`/`bitSet`
   v `Iso14443a.cpp` kolidovali s dvojparametrovými makrami z `Arduino.h`
   (premenované na `readBitAt`/`writeBitAt`).

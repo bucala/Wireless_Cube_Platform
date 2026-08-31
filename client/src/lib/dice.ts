@@ -1,15 +1,22 @@
 /**
  * Geometry and dice arithmetic for the 3D view and the calibration flow.
  * All lengths are millimetres; the 3D scene uses 1 unit = 1 mm.
+ *
+ * Konkrétne rozmery sú runtime konfigurácia (viď lib/hardware.ts). Konštanty
+ * nižšie sú len výrobné defaulty, ktoré používajú testy a počiatočný stav UI.
  */
 
-export const CORE_SIZE_MM = 7.5;
-export const SHELL_SIZE_MM = 12;
-export const TAG_DIAMETER_MM = 5;
+import { DEFAULT_GEOMETRY, wallMm, type DiceGeometry } from './hardware';
+
+export const CORE_SIZE_MM = DEFAULT_GEOMETRY.coreMm;
+export const SHELL_SIZE_MM = DEFAULT_GEOMETRY.shellMm;
+export const TAG_SIZE_MM = DEFAULT_GEOMETRY.tagMm;
+/** @deprecated použi TAG_SIZE_MM – tag je štvorcový, nie okrúhly. */
+export const TAG_DIAMETER_MM = TAG_SIZE_MM;
 export const TAG_THICKNESS_MM = 0.12;
 
 /** Distance from the core surface to the outer shell surface. */
-export const SHELL_WALL_MM = (SHELL_SIZE_MM - CORE_SIZE_MM) / 2;
+export const SHELL_WALL_MM = wallMm(DEFAULT_GEOMETRY);
 
 export type FaceId = 'px' | 'nx' | 'py' | 'ny' | 'pz' | 'nz';
 
@@ -169,14 +176,18 @@ export function pipLayout(value: number): Array<[number, number]> {
  * on the reader. Used by the UI (and the simulator) to explain why a tag shows
  * up at a given field strength.
  */
-export function tagDistancesMm(bottom: FaceId): Record<FaceId, number> {
-  const gap = SHELL_WALL_MM; // shell thickness between core face and outside
+export function tagDistancesMm(
+  bottom: FaceId,
+  geometry: DiceGeometry = DEFAULT_GEOMETRY,
+): Record<FaceId, number> {
+  const gap = wallMm(geometry); // shell thickness between core face and outside
+  const core = geometry.coreMm;
   const top = oppositeFace(bottom);
   const result = {} as Record<FaceId, number>;
   for (const face of FACES) {
     if (face.id === bottom) result[face.id] = 0;
-    else if (face.id === top) result[face.id] = CORE_SIZE_MM;
-    else result[face.id] = Number((CORE_SIZE_MM / 2 + gap * 0.4).toFixed(2));
+    else if (face.id === top) result[face.id] = core;
+    else result[face.id] = Number((core / 2 + gap * 0.4).toFixed(2));
   }
   return result;
 }

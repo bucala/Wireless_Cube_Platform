@@ -1,57 +1,59 @@
-import { useMemo } from 'react';
-import * as THREE from 'three';
+import { FACES, pipLayout } from '../lib/dice';
 
-import { FACES, SHELL_SIZE_MM, pipLayout } from '../lib/dice';
+export interface PipsProps {
+  /** Hrana vonkajšej kocky v mm. */
+  shellMm: number;
+  /** Ako hlboko bodky sedia pod povrchom. */
+  depthMm: number;
+  color: string;
+  /** Strohý režim: plochý materiál bez odleskov. */
+  plain: boolean;
+}
 
-const PIP_RADIUS_MM = 0.62;
-const PIP_SPREAD_MM = 2.7; // distance of the outer pip row from the face centre
-const PIP_DEPTH_MM = 0.22; // how deep the "engraving" sits below the surface
+// Pomery odvodené z klasickej 12 mm kocky, takže bodky rastú s rozmerom.
+const RADIUS_RATIO = 0.052;
+const SPREAD_RATIO = 0.225;
 
 /**
- * Classic D6 pips on the outside of the glass shell.
+ * Klasické bodky D6 na povrchu plášťa.
  *
- * True CSG engraving would need a boolean mesh operation per face; a flattened
- * sphere sunk slightly below the surface reads exactly the same through a
- * transmissive material and keeps the geometry cheap enough for a 60 fps
- * dashboard.
+ * Skutočné vyfrézovanie by znamenalo booleovskú operáciu na každej stene;
+ * sploštená guľa zapustená tesne pod povrch vyzerá cez priehľadný materiál
+ * identicky a scéna zostane dostatočne ľahká na 60 fps.
  */
-export function Pips({ color = '#0b1220' }: { color?: string }) {
-  const geometry = useMemo(() => new THREE.SphereGeometry(PIP_RADIUS_MM, 20, 14), []);
-  const material = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(color),
-        roughness: 0.85,
-        metalness: 0.05,
-        clearcoat: 0.4,
-        clearcoatRoughness: 0.6,
-      }),
-    [color],
-  );
-
-  const surface = SHELL_SIZE_MM / 2 - PIP_DEPTH_MM;
+export function Pips({ shellMm, depthMm, color, plain }: PipsProps) {
+  const radius = shellMm * RADIUS_RATIO;
+  const spread = shellMm * SPREAD_RATIO;
+  const surface = shellMm / 2 - depthMm;
 
   return (
     <group>
       {FACES.map((face) => (
         <group
           key={face.id}
-          position={[
-            face.normal[0] * surface,
-            face.normal[1] * surface,
-            face.normal[2] * surface,
-          ]}
+          position={[face.normal[0] * surface, face.normal[1] * surface, face.normal[2] * surface]}
           rotation={face.rotation}
         >
           {pipLayout(face.value).map(([u, v], index) => (
             <mesh
               key={`${face.id}-${index}`}
-              geometry={geometry}
-              material={material}
-              position={[u * PIP_SPREAD_MM, v * PIP_SPREAD_MM, 0]}
+              position={[u * spread, v * spread, 0]}
               scale={[1, 1, 0.45]}
               raycast={() => null}
-            />
+            >
+              <sphereGeometry args={[radius, plain ? 12 : 20, plain ? 8 : 14]} />
+              {plain ? (
+                <meshBasicMaterial color={color} />
+              ) : (
+                <meshPhysicalMaterial
+                  color={color}
+                  roughness={0.32}
+                  metalness={0.65}
+                  clearcoat={0.5}
+                  clearcoatRoughness={0.4}
+                />
+              )}
+            </mesh>
           ))}
         </group>
       ))}

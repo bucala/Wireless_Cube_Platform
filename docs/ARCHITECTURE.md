@@ -2,7 +2,7 @@
 
 ```
 ┌───────────────────────────── kocka 12 mm ─────────────────────────────┐
-│ sklo s bodkami 1..6 │ jadro 7,5 mm │ 6× NTAG213 ⌀5 mm (stred stien)   │
+│ sklo s bodkami 1..6 │ jadro 8 mm │ 6× NTAG213 5×5 mm (stred stien)    │
 └───────────────────────────────────────────────────────────────────────┘
                  ▼ 13,56 MHz
 ┌──────────────── ESP32-S3-WROOM-1 N16R8 (firmware/) ───────────────────┐
@@ -21,8 +21,12 @@
 │ transports: WsTransport | SerialTransport | SimTransport               │
 │ useDeviceLink  … status, telemetria, throttling posuvníka, log         │
 │ useCalibration … stavový automat párovania + profil kocky (JSON)       │
-│ UI (TailwindCSS, dark): Connection · Signal & DPC Tuner · UID log      │
-│ 3D (react-three-fiber): jadro + glass shell + klikateľné steny         │
+│ useGeometry    … rozmery jadra/obalu/tagu + validácia (hardware.ts)    │
+│ useViewer      … rotácia, pohľady, viditeľnosť dielov, strohý režim    │
+│ useSkin        … paleta (skins.ts) → CSS premenné + farby 3D scény     │
+│ UI (TailwindCSS cez CSS premenné): Connection · Tuner · Geometria ·    │
+│   Hardvér · kalibrácia · UID log; skiny biely/sivý/tmavý               │
+│ 3D (react-three-fiber): RoundedBox jadro + plášť + klikateľné steny    │
 └───────────────────────────────────────────────────────────────────────┘
                  ▼ voliteľne
         Tauri shell (client/src-tauri) → .msi / .exe pre Windows

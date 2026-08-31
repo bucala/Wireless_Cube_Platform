@@ -5,10 +5,11 @@ Ladiaca platforma pre miniatúrne NFC kocky: **ESP32-S3 + PN5180** ako čítačk
 kalibráciu stien kocky.
 
 Kocka má priesvitný obal **12 × 12 × 12 mm** s klasickými bodkami 1–6 a
-nepriehľadné jadro **7,5 × 7,5 × 7,5 mm**, v strede každej steny je zalitý
-kruhový **NTAG213 ⌀5 mm**. Keď kocka leží na čítačke, spodný tag je na ~0 mm,
-bočné na 4–5 mm a vrchný na ~7,5 mm. Celý projekt je o tom, ako spoľahlivo čítať
-**iba ten spodný**.
+nepriehľadné jadro **8 × 8 × 8 mm**, v strede každej steny je zalitý
+**NTAG213 5 × 5 mm** (štvorcový inlay). Keď kocka leží na čítačke, spodný tag je
+na ~0 mm, bočné na ~4–5 mm a vrchný na ~8 mm. Celý projekt je o tom, ako
+spoľahlivo čítať **iba ten spodný**. Rozmery jadra, obalu aj tagu sú v klienti
+runtime konfigurácia, takže model sa prispôsobí tvojej reálnej kocke.
 
 ```
 ┌ ESP32-S3-WROOM-1 N16R8 ┐   ws://nfc-dice.local/ws   ┌ Windows / React ┐
@@ -31,8 +32,18 @@ bočné na 4–5 mm a vrchný na ~7,5 mm. Celý projekt je o tom, ako spoľahliv
 * **Live log UID** s hranovými udalosťami `found` / `lost`, výkonom pri načítaní,
   AGC a dobou trvania skenu.
 * **Interaktívny 3D model** kocky (react-three-fiber): nepriehľadné jadro s
-  vyznačenými 5 mm tagmi, sklenený obal s gravírovanými bodkami a vizualizácia
-  poľa antény, ktorá sa mení s nastaveným výkonom.
+  vyznačenými 5 mm tagmi, sklenený obal s vyrazenými bodkami a vizualizácia
+  poľa antény, ktorá sa mení s nastaveným výkonom. Rotáciu možno pozastaviť,
+  prepínať pohľady (ISO/predok/vrch/bok), rozložiť zostavu (exploded view) a
+  skryť ktorýkoľvek prvok – jadro, plášť, TAG, bodky, pole, čítačku.
+* **Definícia zostavy.** Rozmery jadra (default 8 mm), vonkajšej kocky
+  (default 12 mm), rozmer, tvar aj model tagu (default NTAG213 5 × 5 mm) sa
+  zadávajú v paneli *Rozmery a zostava*; špecifikácia MCU (ESP32-S3-WROOM-1
+  N16R8) a čítačky (PN5180, hardvérové SPI) vrátane pinoutu je v paneli
+  *Hardvér*. Geometria sa validuje a ukladá aj do kalibračného profilu.
+* **Tri farebné skiny.** Skin 1 (biela + oranžová s čiernymi a červenými
+  prvkami), Skin 2 (sivá + oranžová) a tmavý Skin 3; prepínač je v hlavičke,
+  farí sa celé UI aj 3D scéna.
 * **Párovanie stien klikaním.** Aplikácia zachytí UID spodného tagu a vyzve ťa,
   aby si na 3D modeli klikol na stenu, ktorá práve leží dole. Dopočíta hodnotu
   hore (`7 − dole`) a uloží kalibračný JSON profil kocky.

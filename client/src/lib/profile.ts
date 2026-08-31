@@ -3,7 +3,8 @@
  * core face, plus the RF settings the profile was captured with.
  */
 
-import { FACE_IDS, FaceId, faceValue, topValueFromBottom, CORE_SIZE_MM, SHELL_SIZE_MM, TAG_DIAMETER_MM } from './dice';
+import { FACE_IDS, FaceId, faceValue, topValueFromBottom } from './dice';
+import { DEFAULT_GEOMETRY, normalizeGeometry, type DiceGeometry } from './hardware';
 
 export const PROFILE_SCHEMA = 'nfc-dice-profile/1';
 
@@ -25,12 +26,8 @@ export interface DiceProfile {
   name: string;
   createdAt: string;
   updatedAt: string;
-  geometry: {
-    coreMm: number;
-    shellMm: number;
-    tagDiameterMm: number;
-    tagType: string;
-  };
+  /** Snapshot rozmerov, s ktorými bol profil nameraný. */
+  geometry: DiceGeometry;
   rf: {
     tunedPowerPct: number | null;
     ceilingPct: number | null;
@@ -58,12 +55,7 @@ export function createProfile(name = 'Kocka 01'): DiceProfile {
     name,
     createdAt: ts,
     updatedAt: ts,
-    geometry: {
-      coreMm: CORE_SIZE_MM,
-      shellMm: SHELL_SIZE_MM,
-      tagDiameterMm: TAG_DIAMETER_MM,
-      tagType: 'NTAG213',
-    },
+    geometry: { ...DEFAULT_GEOMETRY },
     rf: { tunedPowerPct: null, ceilingPct: null, lowEdgePct: null, firmware: null },
     bindings: [],
   };
@@ -106,6 +98,11 @@ export function withRfSettings(
   rf: Partial<DiceProfile['rf']>,
 ): DiceProfile {
   return { ...profile, rf: { ...profile.rf, ...rf }, updatedAt: nowIso() };
+}
+
+/** Prepíše rozmery v profile aktuálnou konfiguráciou z UI. */
+export function withGeometry(profile: DiceProfile, geometry: DiceGeometry): DiceProfile {
+  return { ...profile, geometry: { ...geometry }, updatedAt: nowIso() };
 }
 
 export function renameProfile(profile: DiceProfile, name: string): DiceProfile {
@@ -166,7 +163,7 @@ export function parseProfile(raw: string): DiceProfile {
     id: data.id ?? base.id,
     createdAt: data.createdAt ?? base.createdAt,
     updatedAt: nowIso(),
-    geometry: { ...base.geometry, ...(data.geometry ?? {}) },
+    geometry: normalizeGeometry(data.geometry),
     rf: { ...base.rf, ...(data.rf ?? {}) },
     bindings,
   };

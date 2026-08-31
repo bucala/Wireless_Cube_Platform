@@ -1,35 +1,59 @@
+/**
+ * Celá paleta ide cez CSS premenné, ktoré nastavuje `applySkin()` zo
+ * src/lib/skins.ts. Vďaka tomu prepnutie skinu neprekresľuje žiadne triedy -
+ * `bg-base-900`, `text-slate-400` aj `border-white/10` len ukážu na inú farbu.
+ */
+const c = (token) => `rgb(var(--c-${token}) / <alpha-value>)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  darkMode: 'class',
+  darkMode: ['class', '[data-skin="noir"]'],
   theme: {
     extend: {
       colors: {
+        // `white` je v celom UI použitá ako vlasová linka / jemný prekryv, nie
+        // ako doslovná biela - na svetlých skinoch preto ukazuje na takmer čiernu.
+        white: c('overlay'),
+        page: c('bg'),
         base: {
-          950: '#05070d',
-          900: '#0a0e17',
-          850: '#0f1420',
-          800: '#141a28',
-          700: '#1d2537',
-          600: '#2a3449',
+          950: c('base-950'),
+          900: c('base-900'),
+          850: c('base-850'),
+          800: c('base-800'),
+          700: c('base-700'),
+          600: c('base-600'),
+        },
+        slate: {
+          50: c('slate-50'),
+          100: c('slate-100'),
+          200: c('slate-200'),
+          300: c('slate-300'),
+          400: c('slate-400'),
+          500: c('slate-500'),
+          600: c('slate-600'),
+          700: c('slate-700'),
+          800: c('slate-800'),
+          900: c('slate-900'),
         },
         accent: {
-          DEFAULT: '#38bdf8',
-          soft: '#7dd3fc',
-          deep: '#0284c7',
+          DEFAULT: c('accent'),
+          soft: c('accent-soft'),
+          deep: c('accent-deep'),
         },
         signal: {
-          ok: '#34d399',
-          warn: '#fbbf24',
-          bad: '#f87171',
+          ok: c('ok'),
+          warn: c('warn'),
+          bad: c('bad'),
         },
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'Consolas', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
-        glow: '0 0 24px -4px rgba(56, 189, 248, 0.45)',
-        inset: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.04)',
+        glow: '0 0 24px -4px rgb(var(--c-accent) / 0.45)',
+        inset: 'inset 0 1px 0 0 rgb(var(--c-overlay) / 0.05)',
+        panel: '0 1px 2px 0 rgb(var(--c-overlay) / 0.06)',
       },
       animation: {
         'pulse-slow': 'pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite',

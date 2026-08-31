@@ -6,8 +6,8 @@
 | --- | --- | --- |
 | MCU | ESP32-S3-WROOM-1 **N16R8** | 16 MB QIO flash, 8 MB OPI PSRAM |
 | NFC front end | NXP **PN5180** modul | 13,56 MHz, ISO/IEC 14443-A, hardvérové SPI |
-| Tagy | **NTAG213**, kruhové inlaye ⌀5 mm | 6 ks, zalité v jadre kocky |
-| Kocka | jadro 7,5 mm (nepriehľadné) + obal 12 mm (priesvitný) | tag v strede každej steny jadra |
+| Tagy | **NTAG213**, štvorcové inlaye 5 × 5 mm | 6 ks, zalité v jadre kocky |
+| Kocka | jadro 8 mm (nepriehľadné) + obal 12 mm (priesvitný) | tag v strede každej steny jadra |
 | Napájanie | 5 V / min. 1 A | PN5180 má špičky pri zapnutí nosnej |
 
 ## Zapojenie SPI
@@ -49,8 +49,8 @@ Voliteľne:
 
 ```
         ┌──────────── 12 mm sklo (bodky 1..6) ────────────┐
-        │        ┌──── 7,5 mm jadro (nepriehľadné) ────┐  │
-        │        │  ⌀5 mm NTAG213 v strede každej stene │  │
+        │        ┌──── 8 mm jadro (nepriehľadné) ──────┐  │
+        │        │  5×5 mm NTAG213 v strede každej stene │  │
         │        └──────────────────────────────────────┘  │
         └────────────────────────────────────────────────┘
                        ▲ 0 mm od antény = spodný tag
@@ -61,8 +61,12 @@ Keď kocka leží na čítačke:
 | Tag | Vzdialenosť od antény | Prah čítania (typicky) |
 | --- | --- | --- |
 | spodná stena | ~0 mm | nízky (jednotky až ~20 %) |
-| 4 bočné steny | 4–5 mm | stredný (~50–65 %) |
-| vrchná stena | ~7,5 mm | vysoký (>80 %) |
+| 4 bočné steny | ~4–5 mm | stredný (~50–65 %) |
+| vrchná stena | ~8 mm | vysoký (>80 %) |
+
+Rozmery v tejto tabuľke sú výrobné defaulty; presné hodnoty pre tvoju kocku
+nastavíš v klienti (panel *Rozmery a zostava*), ktorý z nich prepočíta aj
+vzdialenosti tagov.
 
 Cieľ ladenia: nájsť okno medzi prahom spodného tagu a najnižším prahom bočných
 stien. Firmware ho hľadá automaticky (`firmware/src/DpcTuner.cpp`), UI ho vie
