@@ -8,7 +8,7 @@ const c = (token) => `rgb(var(--c-${token}) / <alpha-value>)`;
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  darkMode: ['class', '[data-skin="noir"]'],
+  darkMode: ['class', ':is([data-skin="noir"], [data-skin="gray"])'],
   theme: {
     extend: {
       colors: {

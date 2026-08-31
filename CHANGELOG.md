@@ -31,8 +31,10 @@ verzovanie podľa [Semantic Versioning](https://semver.org/lang/sk/).
 - 3D náhľad sa nezobrazoval: výška na tele panelu bola prepísaná `flex-1`
   (flex-basis 0 %) v auto-výškovom kontajneri, takže canvas mal nulovú výšku.
   Výška je teraz na paneli (`h-[min(58vh,40rem)]` + `min-h`).
-- Skin 2 (sivá + oranžová) bol prepracovaný: výraznejšia oranžová, tmavšie
-  sivé pozadie, čierne aj červené prvky v UI aj 3D scéne.
+- Skin 2 (sivá + oranžová) prebudovaný podľa referenčného návrhu: teplé tmavé
+  uhlikové sivé (`#151515` pozadie, `#20201F` panely, `#2C2C2C` zvýraznené
+  plochy), vypálená oranžová `#D97757`, teplá biela text `#F0EFEC`, čierne
+  jadro kocky a červené TAG/chybové prvky.
 - Pri ťahaní sliderov, prepínaní ovládacích prvkov alebo otáčaní 3D scény
   už myš neoznačuje text stránky; hodnoty v logoch a poliach zostávajú
   selektovateľné kvôli kopírovaniu UID.
