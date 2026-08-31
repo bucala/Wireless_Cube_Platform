@@ -1,0 +1,24 @@
+# Normalizuj konce riadkov: v repozitari vzdy LF, v pracovnej kopii tiez LF.
+# Zladene s .editorconfig (end_of_line = lf) a s CI, ktore bezi na Linuxe.
+* text=auto eol=lf
+
+# Windows skripty musia mat CRLF, inak ich cmd.exe nemusi spracovat spravne.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binarne subory nikdy nekonvertuj.
+*.png binary
+*.jpg binary
+*.ico binary
+*.pdf binary
+*.bin binary
+*.elf binary
+*.hdr binary
+*.glb binary
+*.gltf binary
+*.woff binary
+*.woff2 binary
+
+# Lockfile drz mimo diffov v review.
+client/package-lock.json -diff linguist-generated
