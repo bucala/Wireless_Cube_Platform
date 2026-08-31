@@ -1,0 +1,33 @@
+# --- Node / Vite -----------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+coverage/
+
+# --- PlatformIO ------------------------------------------------------------
+.pio/
+.pioenvs/
+.piolibdeps/
+firmware/include/secrets.h
+
+# --- Tauri / Rust ----------------------------------------------------------
+target/
+client/src-tauri/target/
+client/src-tauri/gen/
+client/src-tauri/WixTools/
+
+# --- Editors / OS ----------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*

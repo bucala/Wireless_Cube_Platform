@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/1",
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:5173",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "NFC Dice Debugger",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "dialog": { "all": false, "open": true, "save": true },
+      "fs": { "all": false, "writeFile": true, "readFile": true, "scope": ["$DOCUMENT/*"] }
+    },
+    "bundle": {
+      "active": true,
+      "identifier": "sk.wireless-cube.nfc-dice-debugger",
+      "targets": ["msi", "nsis"],
+      "shortDescription": "Ladenie miniatúrnych NFC kociek",
+      "longDescription": "Desktopový dashboard pre ESP32-S3 + PN5180: ladenie RF výkonu (DPC), live log UID a 3D kalibrácia stien kocky.",
+      "copyright": "",
+      "category": "DeveloperTool",
+      "windows": {
+        "wix": { "language": "sk-SK" }
+      }
+    },
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ws: wss: http: https:; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    },
+    "windows": [
+      {
+        "title": "NFC Dice Debugger",
+        "width": 1560,
+        "height": 980,
+        "minWidth": 1100,
+        "minHeight": 720,
+        "resizable": true,
+        "fullscreen": false,
+        "theme": "Dark"
+      }
+    ]
+  }
+}

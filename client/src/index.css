@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-image:
+      radial-gradient(60rem 40rem at 12% -10%, rgba(56, 189, 248, 0.1), transparent 60%),
+      radial-gradient(50rem 40rem at 100% 0%, rgba(129, 140, 248, 0.08), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1d2537;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2a3449;
+    background-clip: padding-box;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-white/5 bg-base-900/70 shadow-inset backdrop-blur-sm;
+  }
+
+  .panel-header {
+    @apply flex items-center justify-between gap-3 border-b border-white/5 px-4 py-3;
+  }
+
+  .panel-title {
+    @apply text-[0.7rem] font-semibold uppercase tracking-[0.18em] text-slate-400;
+  }
+
+  .field-label {
+    @apply mb-1 block text-[0.68rem] font-medium uppercase tracking-[0.14em] text-slate-500;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-white/10 bg-base-950/80 px-3 py-2 font-mono text-sm
+      text-slate-100 outline-none transition placeholder:text-slate-600
+      focus:border-accent/60 focus:ring-2 focus:ring-accent/20;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium
+      transition disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-base-950 hover:bg-accent-soft;
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/10 bg-white/[0.03] text-slate-300 hover:bg-white/[0.07];
+  }
+
+  .btn-danger {
+    @apply btn border border-signal-bad/40 bg-signal-bad/10 text-signal-bad hover:bg-signal-bad/20;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[0.68rem]
+      font-medium uppercase tracking-wider;
+  }
+}
+
+/* Range input: the DPC slider is the primary control of the whole app, so it
+   gets an explicit cross-browser treatment instead of the default look. */
+input[type='range'].dpc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.75rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range'].dpc-slider::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 45%, #fbbf24 78%, #f87171 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+input[type='range'].dpc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -0.4rem;
+  height: 1.3rem;
+  width: 1.3rem;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  border: 3px solid #0a0e17;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.28);
+  transition: box-shadow 120ms ease;
+}
+
+input[type='range'].dpc-slider:active::-webkit-slider-thumb {
+  box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.35);
+}
+
+input[type='range'].dpc-slider::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 45%, #fbbf24 78%, #f87171 100%);
+}
+
+input[type='range'].dpc-slider::-moz-range-thumb {
+  height: 1.1rem;
+  width: 1.1rem;
+  border-radius: 9999px;
+  background: #e2e8f0;
+  border: 3px solid #0a0e17;
+}
+
+input[type='range'].dpc-slider:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
