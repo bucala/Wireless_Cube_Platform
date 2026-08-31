@@ -23,7 +23,9 @@ PN5180 reader(PIN_PN5180_NSS, PIN_PN5180_BUSY, PIN_PN5180_RST);
 Iso14443a nfc(reader);
 RfPower rfPower(reader);
 DpcTuner tuner(nfc, rfPower);
-DiceLink link;
+// Nesmie sa volat "link": unistd.h deklaruje globalnu funkciu link(),
+// takze v setup()/loop() by bol nazov nejednoznacny.
+DiceLink g_link;
 
 struct PresentTag {
   TagUid uid;
@@ -65,8 +67,8 @@ void sendHello() {
   doc["version"] = FW_VERSION;
   doc["proto"] = PROTOCOL_VERSION;
   doc["chip"] = ESP.getChipModel();
-  doc["ip"] = link.ipAddress();
-  doc["ap"] = link.apMode();
+  doc["ip"] = g_link.ipAddress();
+  doc["ap"] = g_link.apMode();
 
   JsonObject rdr = doc["reader"].to<JsonObject>();
   rdr["ok"] = readerOk;
@@ -80,7 +82,7 @@ void sendHello() {
   limits["maxTags"] = MAX_TAGS_PER_SCAN;
   limits["scanPeriodMs"] = SCAN_PERIOD_MS;
 
-  link.send(doc);
+  g_link.send(doc);
 }
 
 void sendState() {
@@ -93,8 +95,8 @@ void sendState() {
   doc["agc"] = rfPower.agc();
   doc["readerOk"] = readerOk;
   doc["heap"] = ESP.getFreeHeap();
-  doc["rssi"] = link.rssi();
-  doc["clients"] = (uint32_t)link.clientCount();
+  doc["rssi"] = g_link.rssi();
+  doc["clients"] = (uint32_t)g_link.clientCount();
 
   JsonObject rf = doc["rf"].to<JsonObject>();
   rf["cwAmplitude"] = rfPower.cwAmplitude();
@@ -119,7 +121,7 @@ void sendState() {
     obj["sightings"] = present[i].sightings;
   }
 
-  link.send(doc);
+  g_link.send(doc);
 }
 
 void sendScanFrame(const InventoryResult& result) {
@@ -139,7 +141,7 @@ void sendScanFrame(const InventoryResult& result) {
     result.tags[i].toHex(hex, sizeof(hex));
     uids.add(hex);
   }
-  link.send(doc);
+  g_link.send(doc);
 }
 
 void sendTagEvent(const TagUid& uid, const char* event, uint32_t dwellMs) {
@@ -150,7 +152,7 @@ void sendTagEvent(const TagUid& uid, const char* event, uint32_t dwellMs) {
   doc["powerPct"] = rfPower.percent();
   doc["dwellMs"] = dwellMs;
   uidToJson(uid, doc.as<JsonObject>());
-  link.send(doc);
+  g_link.send(doc);
   stats.tagEvents++;
 }
 
@@ -169,7 +171,7 @@ void sendDpcFrame() {
   doc["lowEdgePct"] = p.lowEdgePct;
   doc["resultPct"] = p.resultPct;
   doc["note"] = p.note;
-  link.send(doc);
+  g_link.send(doc);
 }
 
 // --- presence tracking -----------------------------------------------------
@@ -267,19 +269,19 @@ void handleCommand(JsonObject cmd) {
     doc["t"] = "pong";
     doc["ts"] = millis();
     if (cmd["id"].is<uint32_t>()) doc["id"] = cmd["id"].as<uint32_t>();
-    link.send(doc);
+    g_link.send(doc);
     return;
   }
 
   if (strcmp(type, "setPower") == 0) {
     if (!cmd["value"].is<int>()) {
-      link.ack("setPower", false, "chýba číselné pole 'value'");
+      g_link.ack("setPower", false, "chýba číselné pole 'value'");
       return;
     }
     if (tuner.busy()) tuner.abort("prerušené manuálnou zmenou výkonu");
     const int value = cmd["value"].as<int>();
     const bool ok = rfPower.setPercent((uint8_t)constrain(value, 0, 100));
-    link.ack("setPower", ok, ok ? "" : reader.lastError());
+    g_link.ack("setPower", ok, ok ? "" : reader.lastError());
     sendState();
     return;
   }
@@ -288,21 +290,21 @@ void handleCommand(JsonObject cmd) {
     const int delta = cmd["delta"] | 0;
     const int target = constrain((int)rfPower.percent() + delta, 0, 100);
     const bool ok = rfPower.setPercent((uint8_t)target);
-    link.ack("nudgePower", ok);
+    g_link.ack("nudgePower", ok);
     sendState();
     return;
   }
 
   if (strcmp(type, "scan") == 0) {
     scanning = cmd["enabled"] | true;
-    link.ack("scan", true);
+    g_link.ack("scan", true);
     sendState();
     return;
   }
 
   if (strcmp(type, "rf") == 0) {
     applyField(cmd["on"] | true);
-    link.ack("rf", true);
+    g_link.ack("rf", true);
     sendState();
     return;
   }
@@ -312,11 +314,11 @@ void handleCommand(JsonObject cmd) {
     if (!start) {
       tuner.abort("zrušené používateľom");
       sendDpcFrame();
-      link.ack("autoTune", true);
+      g_link.ack("autoTune", true);
       return;
     }
     if (!readerOk) {
-      link.ack("autoTune", false, "čítačka nie je inicializovaná");
+      g_link.ack("autoTune", false, "čítačka nie je inicializovaná");
       return;
     }
     const uint8_t startPct = (uint8_t)constrain((int)(cmd["startPct"] | RF_POWER_MAX_PCT),
@@ -328,7 +330,7 @@ void handleCommand(JsonObject cmd) {
     applyField(true);
     tuner.start(startPct, haveTarget ? &target : nullptr);
     sendDpcFrame();
-    link.ack("autoTune", true, haveTarget ? "ladím na zadaný UID" : "ladím na prvý tag v poli");
+    g_link.ack("autoTune", true, haveTarget ? "ladím na zadaný UID" : "ladím na prvý tag v poli");
     return;
   }
 
@@ -336,19 +338,19 @@ void handleCommand(JsonObject cmd) {
     reader.hardReset();
     readerOk = nfc.begin() && rfPower.captureBaseline();
     presentCount = 0;
-    link.ack("resetReader", readerOk, readerOk ? "" : nfc.lastError());
+    g_link.ack("resetReader", readerOk, readerOk ? "" : nfc.lastError());
     sendHello();
     return;
   }
 
   if (strcmp(type, "reboot") == 0) {
-    link.ack("reboot", true, "restartujem");
+    g_link.ack("reboot", true, "restartujem");
     delay(150);
     ESP.restart();
     return;
   }
 
-  link.ack(type, false, "neznámy príkaz");
+  g_link.ack(type, false, "neznámy príkaz");
 }
 
 }  // namespace
@@ -374,13 +376,13 @@ void setup() {
     stats.errors++;
   }
 
-  link.begin(handleCommand);
-  Serial.printf("[dice] ws://%s%s\n", link.ipAddress().c_str(), WS_PATH);
+  g_link.begin(handleCommand);
+  Serial.printf("[dice] ws://%s%s\n", g_link.ipAddress().c_str(), WS_PATH);
   sendHello();
 }
 
 void loop() {
-  link.loop();
+  g_link.loop();
   const uint32_t now = millis();
 
   if (readerOk && scanning && fieldOn && now - lastScanMs >= SCAN_PERIOD_MS) {

@@ -17,11 +17,13 @@ constexpr uint32_t ANTICOLL_TIMEOUT_MS = 12;
 // the transmitted partial byte (MFRC522 style "rxAlign"), flip this flag.
 constexpr bool RX_ALIGNED_TO_KNOWN_BITS = false;
 
-inline bool bitGet(const uint8_t* buf, uint16_t bitIndex) {
+// Nazvy sa nesmu volat bitGet/bitSet: Arduino.h ich definuje ako makra
+// s dvoma parametrami, takze preprocesor by tieto volania rozbil.
+inline bool readBitAt(const uint8_t* buf, uint16_t bitIndex) {
   return (buf[bitIndex >> 3] >> (bitIndex & 0x07)) & 0x01;
 }
 
-inline void bitSet(uint8_t* buf, uint16_t bitIndex, bool value) {
+inline void writeBitAt(uint8_t* buf, uint16_t bitIndex, bool value) {
   const uint8_t mask = (uint8_t)(1u << (bitIndex & 0x07));
   if (value)
     buf[bitIndex >> 3] |= mask;
@@ -35,7 +37,7 @@ inline void bitSet(uint8_t* buf, uint16_t bitIndex, bool value) {
 void mergeBits(uint8_t* dst, uint16_t dstBitOffset, const uint8_t* src, uint16_t srcBitOffset,
                uint16_t bitCount) {
   for (uint16_t i = 0; i < bitCount; ++i)
-    bitSet(dst, dstBitOffset + i, bitGet(src, srcBitOffset + i));
+    writeBitAt(dst, dstBitOffset + i, readBitAt(src, srcBitOffset + i));
 }
 
 }  // namespace
@@ -185,7 +187,7 @@ bool Iso14443a::selectCascadeLevel(uint8_t selCode, uint8_t uidCl[5], uint8_t& s
         mergeBits(known, knownBits, rx, RX_ALIGNED_TO_KNOWN_BITS ? knownBits % 8 : 0,
                   agreedBits);
       }
-      bitSet(known, absoluteBit, false);
+      writeBitAt(known, absoluteBit, false);
       knownBits = (uint16_t)(absoluteBit + 1);
       continue;
     }

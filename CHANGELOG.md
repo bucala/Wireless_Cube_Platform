@@ -5,6 +5,15 @@ verzovanie podľa [Semantic Versioning](https://semver.org/lang/sk/).
 
 ## [Unreleased]
 
+### Opravené
+- Firmware sa nedal skompilovať: lokálne pomocné funkcie `bitGet`/`bitSet`
+  v `Iso14443a.cpp` kolidovali s dvojparametrovými makrami z `Arduino.h`
+  (premenované na `readBitAt`/`writeBitAt`).
+- Globálna instancia `DiceLink link` bola v `setup()`/`loop()` nejednoznačná
+  voči POSIX funkcii `link()` z `unistd.h` (premenovaná na `g_link`).
+- `pio test -e native` neprelinkoval: v teste chýbali prázdne `setUp()`
+  a `tearDown()`, ktoré Unity vyžaduje.
+
 ### Plánované
 - Uloženie doladeného výkonu do EEPROM PN5180 (štart už naladený).
 - Správa viacerých profilov kociek v jednom UI.

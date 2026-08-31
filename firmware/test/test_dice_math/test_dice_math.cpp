@@ -4,6 +4,11 @@
 
 using dicemath::Verdict;
 
+// Unity ich vola pred a po kazdom teste a linker ich vyzaduje aj prazdne.
+// unity.h ich deklaruje v bloku extern "C", takze tu staci obycajna definicia.
+void setUp(void) {}
+void tearDown(void) {}
+
 void test_collision_always_means_field_too_strong() {
   TEST_ASSERT_EQUAL(Verdict::Multi, dicemath::classify(1, true, false, true));
   TEST_ASSERT_EQUAL(Verdict::Multi, dicemath::classify(3, false, false, false));
