@@ -28,6 +28,11 @@ verzovanie podľa [Semantic Versioning](https://semver.org/lang/sk/).
   (`hardware.test.ts`).
 
 ### Opravené (klient)
+- Sklenený plášť je menej priehľadný a pokojnejší: transmisia klesla na 58 %,
+  zmizla chromatická aberácia, deformácia aj časový šum.
+- Panely sú preskupené podľa pracovného toku: „Zariadenie a spojenie“, „Model
+  kocky“ a „Kalibrácia a diagnostika“. Ovládanie 3D náhľadu má samostatné
+  skupiny pre kameru, časti modelu a pomocné zobrazenie.
 - 3D náhľad sa nezobrazoval: výška na tele panelu bola prepísaná `flex-1`
   (flex-basis 0 %) v auto-výškovom kontajneri, takže canvas mal nulovú výšku.
   Výška je teraz na paneli (`h-[min(58vh,40rem)]` + `min-h`).

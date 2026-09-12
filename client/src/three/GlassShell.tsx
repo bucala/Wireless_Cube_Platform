@@ -47,25 +47,25 @@ export function GlassShell({
           <meshStandardMaterial
             color={tint}
             transparent
-            opacity={0.15}
-            roughness={0.45}
+            opacity={0.38}
+            roughness={0.35}
             metalness={0}
             depthWrite={false}
           />
         ) : (
           <MeshTransmissionMaterial
-            samples={6}
+            samples={4}
             resolution={512}
-            transmission={1}
-            thickness={1.6}
-            ior={1.5}
-            chromaticAberration={0.06}
-            anisotropy={0.15}
-            roughness={0.08}
-            distortion={0.15}
-            distortionScale={0.25}
-            temporalDistortion={0.05}
-            attenuationDistance={9}
+            transmission={0.58}
+            thickness={1.2}
+            ior={1.46}
+            chromaticAberration={0}
+            anisotropy={0}
+            roughness={0.16}
+            distortion={0}
+            distortionScale={0}
+            temporalDistortion={0}
+            attenuationDistance={7}
             attenuationColor={tint}
             color={tint}
           />

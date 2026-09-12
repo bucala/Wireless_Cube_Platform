@@ -60,12 +60,14 @@ export default function App() {
             výšku ani vnútorný scroll, takže sa pri zmene okna nemôžu prekryť. */}
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2 2xl:grid-cols-12">
           <section className="order-2 flex min-w-0 flex-col gap-4 2xl:order-1 2xl:col-span-3">
+            <SectionTitle>Zariadenie a spojenie</SectionTitle>
             <ConnectionPanel link={link} />
             {link.simulator && <SimulatorPanel sim={link.simulator} powerPct={link.powerPct} />}
-            <CalibrationPanel link={link} calibration={calibration} />
+            <HardwarePanel geometry={geometry} link={link} />
           </section>
 
           <section className="order-1 flex min-w-0 flex-col gap-4 lg:col-span-2 2xl:order-2 2xl:col-span-6">
+            <SectionTitle>Model kocky</SectionTitle>
             <Panel
               title="3D koncept kocky"
               className="h-[min(58vh,40rem)] min-h-[22rem] overflow-hidden"
@@ -115,20 +117,24 @@ export default function App() {
             <Panel title="Ovládanie náhľadu">
               <ViewerControls viewer={viewer} />
             </Panel>
-
-            <PowerTuner link={link} targetUid={targetUid} />
+            <GeometryPanel geometry={geometryState} />
           </section>
 
           <section className="order-3 flex min-w-0 flex-col gap-4 2xl:col-span-3">
+            <SectionTitle>Kalibrácia a diagnostika</SectionTitle>
             <StatsStrip link={link} />
-            <GeometryPanel geometry={geometryState} />
-            <HardwarePanel geometry={geometry} link={link} />
+            <CalibrationPanel link={link} calibration={calibration} />
+            <PowerTuner link={link} targetUid={targetUid} />
             <UidLogPanel link={link} uidToFace={calibration.uidToFace} />
           </section>
         </div>
       </main>
     </div>
   );
+}
+
+function SectionTitle({ children }: { children: ReactNode }) {
+  return <h2 className="field-label px-1 font-semibold">{children}</h2>;
 }
 
 function Legend({ color, children }: { color: string; children: ReactNode }) {
